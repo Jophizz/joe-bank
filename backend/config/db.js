@@ -1,21 +1,24 @@
 const { MongoClient } = require('mongodb');
-const uri = process.env.MONGO_URI;
 let client;
 
 const connectDB = async () => {
-  if (!client) {
-    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    await client.connect();
-  }
-  console.log('MongoDB Connected...');
-  return client;
+	try {
+		if (!client) {
+			client = new MongoClient(process.env.MONGO_URI);
+			await client.connect();
+		}
+		console.log('MongoDB Connected...');
+		return client;
+	} catch (error) {
+		console.log(error.message);
+	}
 };
 
 const getDB = async () => {
-  if (!client) {
-    await connectDB();
-  }
-  return client.db('bankApp');
+	if (!client) {
+		await connectDB();
+	}
+	return client.db('bankApp');
 };
 
 module.exports = { connectDB, getDB };

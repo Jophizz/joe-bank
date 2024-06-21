@@ -1,0 +1,83 @@
+# https://github.com/lalcebo/json-schema/blob/master/serverless/reference.json
+service: workinance-api
+frameworkVersion: "3"
+useDotenv: true
+plugins:
+  - serverless-prune-plugin
+  - serverless-dotenv-plugin
+  - serverless-deployment-bucket
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+
+  stage: ${opt:stage, 'development'}
+  region: ${opt:region, 'us-east-1'}
+  name: joe-bank
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'development'}
+  runtime: nodejs20.x
+  region: us-east-1
+  deploymentBucket:
+    name: ${self:service}
+  deploymentPrefix: ${self:custom.name}
+  architecture: arm64
+
+  # Optional CloudFormation tags to apply to APIs and functions
+  tags:
+    appName: ${self:custom.name}
+
+  # Optional CloudFormation tags to apply to the stack
+  stackTags:
+    appName: ${self:custom.name}
+
+  httpApi:
+    # https://www.serverless.com/framework/docs/providers/aws/events/http-api
+    shouldStartNameWithService: true
+    cors:
+      allowedOrigins: "*"
+      allowedHeaders: "*"
+      allowedMethods: "*"
+      allowCredentials: false
+
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_ENV: ${self:custom.stage}
+    NODE_OPTIONS: "--enable-source-maps"
+    JWT_SECRET: ${env:JWT_SECRET}
+    MONGO_URI: ${env:MONGO_URI}
+
+  # Below asigned lambda function the permission use other AWS services
+  iam:
+    role:
+      statements: # permissions for all of your functions can be set here
+        - Effect: Allow
+          Action: # Gives permission to DynamoDB tables in a specific region
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: 'arn:aws:dynamodb:us-east-1:*:*'
+        - Effect: "Allow"
+          Action:
+            - "lambda:*"
+          Resource: '*'
+        - Effect: "Allow"
+          Action:
+            - "events:*"
+          Resource: '*'
+
+functions:
+  main:
+    name: ${self:service}-${self:custom.stage}
+    handler: lamnda.handler
+    timeout: 15
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: any
