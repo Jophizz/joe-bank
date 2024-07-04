@@ -14,7 +14,7 @@ services:
     container_name: backend
     environment:
       - MONGO_URI=mongodb://mongo:27017/bankApp
-      - JWT_SECRET=+DbNYyKOyK4ipvz855roUU0Tvcw99HLY2WRzgXlJhMc=
+      - JWT_SECRET=+DbNYyKOyK4ipvz855roUU0Tvcw99HLY2WRzgXlJhMc==
     ports:
       - "5000:5000"
     depends_on:
