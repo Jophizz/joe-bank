@@ -1,22 +1,16 @@
-version: '3'
 services:
   mongo:
-    image: mongo
+    image: mongo:7
     container_name: mongo
-    ports:
-      - "27017:27017"
     volumes:
-      - ./mongo/config/mongod.conf:/etc/mongo/mongod.conf
-    command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
+      - mongo-data:/data/db
 
   backend:
     build: ./backend
     container_name: backend
     environment:
       - MONGO_URI=mongodb://mongo:27017/bankApp
-      - JWT_SECRET=${JWT_SECRET}
-    ports:
-      - "5000:5000"
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET in a .env file, see .env.example}
     depends_on:
       - mongo
 
@@ -24,6 +18,9 @@ services:
     build: ./frontend
     container_name: frontend
     ports:
-      - "8080:8080"
+      - "8080:80"
     depends_on:
       - backend
+
+volumes:
+  mongo-data:
