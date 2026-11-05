@@ -117,9 +117,7 @@ router.post(
 router.get('/', auth, async (req, res) => {
   try {
     const db = await getDB();
-    console.log('Fetching transactions for user:', req.user.id);
-    const transactions = await db.collection('transactions').find({ userId: new ObjectId(req.user.id) }).toArray();
-    console.log('Transactions found:', transactions);
+    const transactions = await db.collection('transactions').find({ userId: req.user.id }).sort({ date: -1 }).toArray();
     res.json(transactions);
   } catch (err) {
     console.error('Error fetching transactions:', err.message);
