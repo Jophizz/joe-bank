@@ -4,6 +4,16 @@ A full-stack banking web app I built in 2024 during the MIT xPRO Professional Ce
 
 Users can create an account, log in, deposit and withdraw money from savings or checking accounts, deposit a cheque by taking a photo with their webcam, and see their balance and transaction history.
 
+## Screenshots
+
+![Login page](screenshots/login.png)
+
+![Making a deposit](screenshots/deposit.png)
+
+![Balance after a deposit and a withdrawal](screenshots/balance.png)
+
+![Transaction history](screenshots/transactions.png)
+
 ## Built with
 
 - Frontend: React, React Router, Bootstrap, Axios
@@ -27,17 +37,19 @@ What it does well:
 - Passwords are stored as bcrypt hashes, never as plain text.
 - A wrong email and a wrong password get the same "Invalid Credentials" message, so the login page doesn't reveal which accounts exist.
 - Form inputs are checked on the server before anything is saved.
-- Private pages need a valid login token.
+- Private pages need a valid login token, and users can only see their own transactions.
 
 What I fixed (November 2026):
 - The secret key used to sign login tokens was written directly in docker-compose.yml, so anyone could read it on GitHub. It now comes from an environment variable instead (see .env.example). The old key is still in the commit history, so it should be treated as exposed and never reused.
 - The app now refuses to start if JWT_SECRET hasn't been set.
 - The Docker setup didn't work. The website was sent to the wrong port, API requests went to the wrong address, and the database was told to load a config file that didn't exist. I fixed all three.
 - Only the website is reachable from outside Docker now. The database and the API can only be reached inside Docker's private network.
+- Moved both containers off end-of-life versions of Node.js (16 and 20) to Node.js 24, which gets security updates until April 2028.
+- The server printed every user's full transaction records to its logs. Financial data shouldn't end up in logs, so I removed it.
+- Fixed the All Transactions page, which always showed nothing. Transactions were saved with the user's ID as text but searched for as a MongoDB ObjectId, so they never matched.
 
 What I would improve next:
 - Limit repeated login attempts to slow down password guessing.
 - Shorten login sessions (tokens currently last 5 days).
 - Add a username and password to MongoDB.
 - Only accept requests from the app's own address (CORS) and add security headers.
-  - Moved both containers off end-of-life versions of Node.js (16 and 20) to Node.js 24, which gets security updates until April 2028.
