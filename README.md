@@ -6,13 +6,13 @@ Users can create an account, log in, deposit and withdraw money from savings or 
 
 ## Screenshots
 
-![Login page](screenshots/login.png)
+![Login page](login.png)
 
-![Making a deposit](screenshots/deposit.png)
+![Making a deposit](deposit.png)
 
-![Balance after a deposit and a withdrawal](screenshots/balance.png)
+![Balance after a deposit and a withdrawal](balance.png)
 
-![Transaction history](screenshots/transactions.png)
+![Transaction history](transactions.png)
 
 ## Built with
 
