@@ -40,3 +40,4 @@ What I would improve next:
 - Shorten login sessions (tokens currently last 5 days).
 - Add a username and password to MongoDB.
 - Only accept requests from the app's own address (CORS) and add security headers.
+  - Moved both containers off end-of-life versions of Node.js (16 and 20) to Node.js 24, which gets security updates until April 2028.
